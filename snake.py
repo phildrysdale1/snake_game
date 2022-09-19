@@ -72,13 +72,17 @@ def create_body_part():
 ## food eaten function
 def food_eaten():
     if head.distance(food) < 20:
+        global delay
         # Move the food to random location
         x = random.randint(-290,290)
         y = random.randint(-290,290)
         food.goto(x,y)
+        if delay > 0.03:
+            delay -= 0.002
 
         create_body_part()
 
+## build body when food eaten function
 def build_body():
     # Move the body parts (in reverse order)
     for index in range(len(all_body_parts)-1, 0, -1):
@@ -90,6 +94,21 @@ def build_body():
         x = head.xcor()
         y = head.ycor()
         all_body_parts[0].goto(x,y)
+
+## check for collision with border
+def collision_check():
+    global all_body_parts
+    if head.xcor() > 290 or head.xcor() < -290 or head.ycor() > 290 or head.ycor() < -290:
+        time.sleep(1)
+        head.goto(0,0)
+        head.direction = "stop"
+
+    # hide body_parts
+        for body_part in all_body_parts:
+            body_part.goto(1000,1000)
+
+    # clear segments list
+        all_body_parts.clear()
 
 
 ## ---- INPUT ---- ##
@@ -112,6 +131,8 @@ while True:
     build_body()
 
     move_head()
+
+    collision_check()
     
     time.sleep(delay)
 
