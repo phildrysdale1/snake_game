@@ -6,6 +6,8 @@ import random
 ## ---- VARIABLES ---- ##
 delay = 0.2
 all_body_parts = []
+score = 0
+high_score = 0
 
 ## ---- DISPLY ---- ##
 
@@ -15,6 +17,17 @@ win.title("Snake Game by Phil Drysdale")
 win.bgcolor("black")
 win.setup(width=600, height=600)
 win.tracer(0) # turn off screen updates for efficiency
+
+# Scoring
+scoreboard = turtle.Turtle()
+scoreboard.speed(0)
+scoreboard.shape("square")
+scoreboard.color("white")
+scoreboard.penup()
+scoreboard.hideturtle()
+scoreboard.goto(0,260)
+scoreboard.write("Score: {} | High Score: {}".format(score, high_score), align="center", font=("Courier", 20, "normal"))
+
 
 ## ---- OBJECTS ---- ##
 
@@ -75,6 +88,7 @@ def create_body_part():
     
 ## food eaten function
 def food_eaten():
+    global score, high_score
     if head.distance(food) < 20:
         global delay
         # Move the food to random location
@@ -82,8 +96,13 @@ def food_eaten():
         y = random.randint(-290,290)
         food.goto(x,y)
         if delay > 0.03:
-            delay -= 0.002
-
+            delay -= 0.01
+        # increase score
+        score += 1
+        if score > high_score:
+            high_score = score
+        update_score()
+        # grow body
         create_body_part()
 
 ## build body when food eaten
@@ -111,8 +130,13 @@ def collision_check():
         if body_part.distance(head) < 20:
             reset()
 
+def update_score():
+    scoreboard.clear()
+    scoreboard.write("Score: {} | High Score: {}".format(score, high_score), align="center", font=("Courier", 20, "normal"))
+
 def reset():
     # reset head
+    global score, delay
     time.sleep(1)
     head.goto(0,0)
     head.direction = "stop"
@@ -123,6 +147,15 @@ def reset():
 
     # clear segments list
     all_body_parts.clear()
+
+    # reset score
+    score = 0
+    update_score()
+
+    # reset speed
+    delay = 0.2
+
+
 
 ## ---- INPUT ---- ##
 
