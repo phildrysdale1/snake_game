@@ -15,7 +15,7 @@ win.title("Snake Game by Phil Drysdale")
 win.bgcolor("black")
 win.setup(width=600, height=600)
 win.tracer(0) # turn off screen updates for efficiency
- 
+
 ## ---- OBJECTS ---- ##
 
 # Food
@@ -37,7 +37,7 @@ head.direction = "stop"
 
 ## ---- FUNCTIONS ---- ##
 
-# move head function
+# move head
 def move_head():
     # set coords
     y = head.ycor()
@@ -52,15 +52,19 @@ def move_head():
         head.setx(x + 20)
 
 def go_up():
-    head.direction = "up"
+    if head.direction != "down":
+        head.direction = "up"
 def go_down():
-    head.direction = "down"
+    if head.direction != "up":
+        head.direction = "down"
 def go_left():
-    head.direction = "left"
+    if head.direction != "right":
+        head.direction = "left"
 def go_right():
-    head.direction = "right" 
+    if head.direction != "left":
+        head.direction = "right" 
 
-## Create body_part function
+## Create body_part
 def create_body_part():
     body_part = turtle.Turtle()
     body_part.speed(0)
@@ -82,7 +86,7 @@ def food_eaten():
 
         create_body_part()
 
-## build body when food eaten function
+## build body when food eaten
 def build_body():
     # Move the body parts (in reverse order)
     for index in range(len(all_body_parts)-1, 0, -1):
@@ -95,21 +99,30 @@ def build_body():
         y = head.ycor()
         all_body_parts[0].goto(x,y)
 
-## check for collision with border
+## check for collision with border and body
 def collision_check():
     global all_body_parts
-    if head.xcor() > 290 or head.xcor() < -290 or head.ycor() > 290 or head.ycor() < -290:
-        time.sleep(1)
-        head.goto(0,0)
-        head.direction = "stop"
+    # check for border collisions
+    if head.xcor() > 290 or head.xcor() < -295 or head.ycor() > 295 or head.ycor() < -290:
+        reset()
 
+    # check for collisons with self
+    for body_part in all_body_parts:
+        if body_part.distance(head) < 20:
+            reset()
+
+def reset():
+    # reset head
+    time.sleep(1)
+    head.goto(0,0)
+    head.direction = "stop"
+    
     # hide body_parts
-        for body_part in all_body_parts:
-            body_part.goto(1000,1000)
+    for body_part in all_body_parts:
+        body_part.goto(1000,1000)
 
     # clear segments list
-        all_body_parts.clear()
-
+    all_body_parts.clear()
 
 ## ---- INPUT ---- ##
 
@@ -119,6 +132,7 @@ win.onkeypress(go_up, "w")
 win.onkeypress(go_down, "s")
 win.onkeypress(go_left, "a")
 win.onkeypress(go_right, "d")
+
 
 ## ---- GAME ---- ##
 
